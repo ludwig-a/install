@@ -34,7 +34,6 @@ if ! makepkg -si; then
   exit 1
 fi
 
-
 # Remove yay directory
 cd .. && rm -rf yay
 
@@ -50,16 +49,22 @@ PROGRAMS_TO_INSTALL=(
 # Install programs with yay
 ERRORS=0
 for PROGRAM in "${PROGRAMS_TO_INSTALL[@]}"; do
-  if ! yay -S --noconfirm "$PROGRAM"; then
-    echo "Failed to install $PROGRAM."
-    ERRORS=$((ERRORS+1))
+  if ! command -v "$PROGRAM" >/dev/null 2>&1; then
+    if ! yay -S --noconfirm "$PROGRAM"; then
+      echo -e "\e[31mFailed to install $PROGRAM\e[0m"
+      ERRORS=$((ERRORS+1))
+    else
+      echo "$PROGRAM successfully installed"
+    fi
+  else
+    echo "$PROGRAM is already installed"
   fi
 done
 
 if [[ $ERRORS -eq 0 ]]; then
-  echo "All programs installed successfully."
+  echo -e "\e[32mAll programs installed successfully.\e[0m"
 else
-  echo "$ERRORS program(s) failed to install."
+  echo -e "\e[31m$ERRORS program(s) failed to install.\e[0m"
 fi
 
 exit $ERRORS

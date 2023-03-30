@@ -13,8 +13,6 @@ PROGRAMS=(
   "neofetch"
   "rsync"
   "zsh"
-
-
   "ufw"
   "keepassxc"
   "light"
@@ -47,18 +45,12 @@ for PROGRAM in "${PROGRAMS[@]}"; do
   if command -v "$PROGRAM" >/dev/null 2>&1; then
     echo "$PROGRAM is already installed"
   else
-    # Prompt user to continue or skip installation
-    read -p "Do you want to install $PROGRAM? [Y/n] " INSTALL
-    if [[ "$INSTALL" =~ ^[Yy]$ ]] || [ -z "$INSTALL" ]; then
-      # Install program
-      if sudo pacman -S --noconfirm "$PROGRAM"; then
-        echo "$PROGRAM successfully installed"
-      else
-        echo -e "\e[31mFailed to install $PROGRAM\e[0m"
-        ((FAILED++))
-      fi
+    # Install program
+    if sudo pacman -S --noconfirm "$PROGRAM"; then
+      echo "$PROGRAM successfully installed"
     else
-      echo "Skipping $PROGRAM installation"
+      echo -e "\e[31mFailed to install $PROGRAM\e[0m"
+      ((FAILED++))
     fi
   fi
 done
@@ -67,5 +59,10 @@ done
 if [ "$FAILED" -eq 0 ]; then
   echo -e "\e[32mAll programs successfully installed\e[0m"
 else
-  echo -e "\e[31m$FAILED programs failed to install\e[0m"
+  echo -e "\e[31m$FAILED programs failed to install:\e[0m"
+  for PROGRAM in "${PROGRAMS[@]}"; do
+    if ! command -v "$PROGRAM" >/dev/null 2>&1; then
+      echo -e "\e[31m- $PROGRAM\e[0m"
+    fi
+  done
 fi
