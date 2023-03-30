@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Set backup directory path
+BACKUP_DIR="$HOME/backup"
+
+# Create backup directory if it doesn't exist
+mkdir -p "$BACKUP_DIR"
+
+# Set files and directories to backup
+FILES_TO_BACKUP=(
+  ".bashrc"
+  ".aliasbashrc"
+  ".zshrc"
+  ".aliaszshrc"
+  ".exportrc"
+  "remap_keys.sh"
+  "psw.kdbx"
+  "/.config/i3/config"
+  ".config/BraveSoftware/Brave-Browser/Default/Bookmarks"
+)
+
+DIRS_TO_BACKUP=(
+  "$HOME/.config/i3/wallpapers"
+  "$HOME/.config/i3/fond_ecran"
+  "$HOME/projets"
+  "$HOME/bin"
+  "$HOME/ArcoLinuxD-Out"
+  "$HOME/Documents"
+)
+
+# Loop through files to backup
+for FILE in "${FILES_TO_BACKUP[@]}"; do
+  # Copy file to backup directory if it exists
+  if [ -e "$HOME/$FILE" ]; then
+    cp "$HOME/$FILE" "$BACKUP_DIR"
+    echo "Copied $FILE to backup directory"
+  else
+    echo "File does not exist: $HOME/$FILE"
+  fi
+done
+
+# Loop through directories to backup
+for DIR in "${DIRS_TO_BACKUP[@]}"; do
+  # Copy directory and its contents to backup directory if it exists
+  if [ -d "$DIR" ]; then
+    cp -r "$DIR" "$BACKUP_DIR"
+    echo "Copied $DIR and its contents to backup directory"
+  else
+    echo "Directory does not exist: $DIR"
+  fi
+done
+
+echo "Backup complete."

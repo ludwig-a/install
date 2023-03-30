@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Set backup directory path
+SYNC_DIR="$HOME/sync"
+
+# Create sync directory if it doesn't exist
+mkdir -p "$SYNC_DIR"
+
+# Set files and directories to synchronize
+FILES_TO_SYNC=(
+  ".bashrc"
+  ".aliasbashrc"
+  ".zshrc"
+  ".aliaszshrc"
+  ".exportrc"
+  "remap_keys.sh"
+  "psw.kdbx"
+  ".config/BraveSoftware/Brave-Browser/Default/Bookmarks"
+)
+
+DIRS_TO_SYNC=(
+  "$HOME/.config/i3/wallpapers"
+  "$HOME/.config/i3/fond_ecran"
+  "$HOME/projets"
+  "$HOME/bin"
+  "$HOME/ArcoLinuxD-Out"
+  "$HOME/Documents"
+)
+
+# Loop through files to synchronize
+for FILE in "${FILES_TO_SYNC[@]}"; do
+  # Synchronize file if it exists
+  if [ -e "$HOME/$FILE" ]; then
+    rsync -av --delete "$HOME/$FILE" "$SYNC_DIR"
+    echo "Synchronized $FILE to sync directory"
+  else
+    echo "File does not exist: $HOME/$FILE"
+  fi
+done
+
+# Loop through directories to synchronize
+for DIR in "${DIRS_TO_SYNC[@]}"; do
+  # Synchronize directory and its contents if it exists
+  if [ -d "$DIR" ]; then
+    rsync -av --delete "$DIR/" "$SYNC_DIR/$(basename $DIR)/"
+    echo "Synchronized $DIR and its contents to sync directory"
+  else
+    echo "Directory does not exist: $DIR"
+  fi
+done
+
+echo "Sync complete."
