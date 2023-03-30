@@ -12,7 +12,7 @@ fi
 # Check if yay is already installed
 if command -v yay &> /dev/null; then
   echo "yay is already installed."
-  exit 0
+#  exit 0
 fi
 
 # Create download directory if it doesn't exist
@@ -54,17 +54,22 @@ for PROGRAM in "${PROGRAMS_TO_INSTALL[@]}"; do
       echo -e "\e[31mFailed to install $PROGRAM\e[0m"
       ERRORS=$((ERRORS+1))
     else
-      echo "$PROGRAM successfully installed"
+      echo -e "\e[32m$PROGRAM successfully installed\e[0m"
     fi
   else
-    echo "$PROGRAM is already installed"
+    echo -e "\e[32m$PROGRAM is already installed\e[0m"
   fi
 done
 
 if [[ $ERRORS -eq 0 ]]; then
   echo -e "\e[32mAll programs installed successfully.\e[0m"
 else
-  echo -e "\e[31m$ERRORS program(s) failed to install.\e[0m"
+  echo -e "\e[31m$ERRORS program(s) failed to install:\e[0m"
+  for PROGRAM in "${PROGRAMS_TO_INSTALL[@]}"; do
+    if ! command -v "$PROGRAM" >/dev/null 2>&1; then
+      echo -e "\e[31m- $PROGRAM\e[0m"
+    fi
+  done
 fi
 
 exit $ERRORS
